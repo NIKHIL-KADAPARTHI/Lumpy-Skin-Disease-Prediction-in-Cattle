@@ -1,0 +1,11 @@
+torch
+opencv-python-headless
+numpy==1.26.4
+joblib
+requests
+pandas
+pillow
+ultralytics
+scikit-learn==1.2.2
+pyrebase4
+pycryptodome
