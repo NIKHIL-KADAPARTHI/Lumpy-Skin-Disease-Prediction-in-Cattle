@@ -42,7 +42,7 @@ FarmFriend is a comprehensive web application designed for cattle health monitor
   - OpenWeatherMap API & GoMaps API for geocoding and weather data
 
 ## Project Structure
-
+[Project Structure](structure.txt)
 
 ## Setup and Installation
 
@@ -77,31 +77,31 @@ FarmFriend is a comprehensive web application designed for cattle health monitor
     npm run dev
 
 ## Deployment
-  Front-End Deployment
-    Vercel or Netlify:
-    Push your front-end code to GitHub and connect the repository to Vercel or Netlify. Follow their guides to deploy a Vite/React app.
-  Back-End Deployment
-    Render, Railway, or Heroku:
-    Push your backend (FastAPI) code to GitHub and deploy it using a free tier on one of these platforms. Use the command:
-      uvicorn api:app --host 0.0.0.0 --port $PORT
-      and set your environment variables in the service's dashboard.
+  - Front-End Deployment
+    - Vercel or Netlify:
+    - Push your front-end code to GitHub and connect the repository to Vercel or Netlify. Follow their guides to deploy a Vite/React app.
+  - Back-End Deployment
+    - Render, Railway, or Heroku:
+    - Push your backend (FastAPI) code to GitHub and deploy it using a free tier on one of these platforms. Use the command:
+      - uvicorn api:app --host 0.0.0.0 --port $PORT
+      - And set your environment variables in the service's dashboard.
 
 ## Usage
-  User Registration & Login:
-    Users can register and log in using Firebase authentication.
-  Assessment:
-    Navigate to the Dashboard, upload a cattle image, enter additional health data, and fetch weather data. The system will then process the input and provide an       assessment.
-  RT-PCR Update:
-    Use the RT-PCR section to update an assessment with laboratory test results.
+  - User Registration & Login:
+    - Users can register and log in using Firebase authentication.
+  - Assessment:
+    - Navigate to the Dashboard, upload a cattle image, enter additional health data, and fetch weather data. The system will then process the input and provide an       assessment.
+  - RT-PCR Update:
+    - Use the RT-PCR section to update an assessment with laboratory test results.
 
 ## Contributing
-  Contributions are welcome! Please fork the repository, make changes, and open a pull request. Make sure to follow any coding guidelines provided.
+- Contributions are welcome! Please fork the repository, make changes, and open a pull request. Make sure to follow any coding guidelines provided.
 
 ## Acknowledgments
-  Ultralytics YOLOv5
-  Firebase
-  OpenWeatherMap
-  Vite
-  React
+- Ultralytics YOLOv5
+-  Firebase
+- OpenWeatherMap
+- Vite
+- React
 
  
