@@ -57,24 +57,24 @@ FarmFriend is a comprehensive web application designed for cattle health monitor
 ### Steps
 
 1. **Clone the Repository:**
-   git clone https://github.com/yourusername/FarmFriend.git
-   cd FarmFriend
+   - git clone https://github.com/yourusername/FarmFriend.git
+   - cd FarmFriend
 2. **Set Up the Backend:**
-  Create and activate a virtual environment:
-    python -m venv venv
-    venv\Scripts\activate    # On Windows
-  Install Python dependencies:
-    pip install -r requirements.txt
-  Create a .env file in the root folder with your API keys and Firebase configuration.
+  - Create and activate a virtual environment:
+    - python -m venv venv
+    - venv\Scripts\activate    # On Windows
+  - Install Python dependencies:
+    - pip install -r requirements.txt
+  - Create a .env file in the root folder with your API keys and Firebase configuration.
 3. **Set Up the Front-End:**
-  Navigate to the front-end folder (if separate) or remain in the project root (if combined):
-    npm install 
-  Update environment variables in a .env file (e.g., VITE_GOOGLE_MAPS_API_KEY, VITE_WEATHER_API_KEY, etc.).
+  - Navigate to the front-end folder (if separate) or remain in the project root (if combined):
+    - npm install 
+  - Update environment variables in a .env file (e.g., VITE_GOOGLE_MAPS_API_KEY, VITE_WEATHER_API_KEY, etc.).
 4. **Run the Project Locally:**
-  Start the backend server:
-    uvicorn api:app --reload
-  Start the front-end dev server:
-    npm run dev
+  - Start the backend server:
+    - uvicorn api:app --reload
+  - Start the front-end dev server:
+    - npm run dev
 
 ## Deployment
   - Front-End Deployment
