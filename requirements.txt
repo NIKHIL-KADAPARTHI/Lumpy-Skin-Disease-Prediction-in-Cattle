@@ -9,3 +9,6 @@ ultralytics
 scikit-learn==1.2.2
 pyrebase4
 pycryptodome
+uvicorn
+fastapi
+python-dotenv
