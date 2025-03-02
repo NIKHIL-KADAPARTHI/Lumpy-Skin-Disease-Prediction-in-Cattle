@@ -15,13 +15,15 @@ import uvicorn
 load_dotenv()
 
 app = FastAPI()
+
 @app.get("/")
 def read_root():
     return {"message": "API is running."}
+
 # Setup CORS so that your Vite + React front-end can call this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development; later, restrict to your domain
+    allow_origins=["*"],  # For dev; restrict in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,8 +37,12 @@ weather_model = None
 def load_yolo_model():
     global yolo_model
     if yolo_model is None:
-        # This uses torch.hub to load your custom YOLOv5 model from a local directory.
-        yolo_model = torch.hub.load('./yolov5', 'custom', path='best.pt', source='local', force_reload=True)
+        yolo_model = torch.hub.load(
+            './yolov5', 'custom',
+            path='best.pt',
+            source='local',
+            force_reload=True
+        )
     return yolo_model
 
 def load_weather_model():
@@ -45,84 +51,124 @@ def load_weather_model():
         weather_model = joblib.load("random_forest_model_weather_data.pkl")
     return weather_model
 
-# 2. Helper Functions for Inference
-def get_weather_risk(tmp, vap, pre, cld):
+# 2. LSD Inference Functions
+
+def get_weather_prediction(tmp: float, vap: float, pre: float, cld: float):
+    """
+    Return (rf_pred, rf_proba) from the random forest model.
+    rf_pred is the binary 0/1 classification,
+    rf_proba is the model's probability of LSD risk (class=1).
+    """
     model = load_weather_model()
     X = np.array([[tmp, vap, pre, cld]], dtype=float)
-    prediction = model.predict(X)[0]
-    return prediction
+    # Prediction (0 or 1)
+    rf_pred = model.predict(X)[0]
+    # Probability that LSD risk = 1
+    rf_proba = model.predict_proba(X)[0][1]
+    return rf_pred, rf_proba
 
-def decide_label(class_name, confidence, weather_risk, risk_str, lsd_conf_threshold):
-    if class_name.lower() == "infected":
-        if confidence >= lsd_conf_threshold:
-            label_text = "LSD Confirmed"
-        else:
-            label_text = "LSD Suspected" if weather_risk == 1 else "Healthy"
-    else:
-        label_text = "Healthy" if confidence >= lsd_conf_threshold else ("LSD Suspected" if weather_risk == 1 else "Healthy")
-    label_text += f" | Weather: {risk_str}"
-    if confidence < lsd_conf_threshold:
-        label_text += f" (conf: {confidence:.2f})"
-    return label_text
+def draw_custom_label(image, box, label_text, color=(0, 255, 0)):
+    """
+    Draw bounding box with a multi-line label *inside* the rectangle.
+    """
+    (x_min, y_min, x_max, y_max) = box
+    cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
 
-def annotate_image_cv2(img_cv2, weather_risk, risk_str, yolo_conf_threshold=0.25, lsd_conf_threshold=0.6):
+    box_w = x_max - x_min
+    box_h = y_max - y_min
+    # dynamic but smaller scaling => /300
+    font_scale = max(0.3, min(0.8, (min(box_w, box_h) / 300.0)))
+    font_face = cv2.FONT_HERSHEY_SIMPLEX
+    thickness = 1
+
+    lines = label_text.split("\n")
+    text_x = x_min + 5
+    text_y = y_min + 20
+
+    for line in lines:
+        cv2.putText(image, line, (text_x, text_y),
+                    font_face, font_scale, color, thickness, cv2.LINE_AA)
+        text_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+        text_y += text_size[1] + 5
+
+def run_inference(image_cv2, tmp, vap, pre, cld):
+    # 1. Get random forest results (rf_pred, rf_proba)
+    rf_pred, rf_proba = get_weather_prediction(tmp, vap, pre, cld)
+
+    # 2. YOLO inference
     model = load_yolo_model()
-    model.conf = yolo_conf_threshold
-    results = model(img_cv2)
-    detections = results.xyxy[0].cpu().numpy()
-    if len(detections) == 0:
-        fallback_label = "No Visual Detection: " + ("LSD Suspected" if weather_risk == 1 else "Likely Healthy")
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(img_cv2, fallback_label, (10, 30), font, 0.7, (255, 255, 255), 2)
-    else:
-        for det in detections:
-            x1, y1, x2, y2, conf, cls = det
-            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
-            confidence = float(conf)
-            class_idx = int(cls)
-            class_name = model.names[class_idx]
-            label_text = decide_label(class_name, confidence, weather_risk, risk_str, lsd_conf_threshold)
-            # Choose bounding box color
-            if "Confirmed" in label_text:
-                color = (0, 0, 255)  # Red
-            elif "Suspected" in label_text:
-                color = (128, 0, 128)  # Purple
-            elif "Healthy" in label_text:
-                color = (0, 255, 0)  # Green
-            else:
-                color = (255, 255, 255)
-            text_y = y1 - 5 if (y1 - 5) > 10 else y1 + 20
-            cv2.rectangle(img_cv2, (x1, y1), (x2, y2), color, 2)
-            cv2.putText(img_cv2, label_text, (x1, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
-    return img_cv2
+    results = model(image_cv2)
+    df = results.pandas().xyxy[0]
 
-def run_inference(image_cv2, tmp, vap, pre, cld, yolo_conf_threshold=0.25, lsd_conf_threshold=0.6):
-    weather_risk = get_weather_risk(tmp, vap, pre, cld)
-    risk_str = "High" if weather_risk == 1 else "Low"
-    annotated_img = annotate_image_cv2(image_cv2.copy(), weather_risk, risk_str, yolo_conf_threshold, lsd_conf_threshold)
-    results = load_yolo_model()(image_cv2)
-    detections = results.xyxy[0].cpu().numpy()
-    if len(detections) == 0:
-        model_assessment = "likely lsd" if weather_risk == 1 else "likely healthy"
-    else:
-        max_idx = int(np.argmax(detections[:, 4]))
-        best_det = detections[max_idx]
-        _, _, _, _, conf, cls = best_det
-        confidence = float(conf)
-        class_idx = int(cls)
-        class_name = load_yolo_model().names[class_idx]
-        label_text = decide_label(class_name, confidence, weather_risk, risk_str, lsd_conf_threshold)
-        if "Confirmed" in label_text:
-            model_assessment = "lsd detected"
-        elif "Suspected" in label_text:
-            model_assessment = "lsd suspected"
-        elif "Healthy" in label_text:
-            model_assessment = "healthy"
+    # If no bounding boxes => case 3 or 4
+    if len(df) == 0:
+        if rf_pred == 1:
+            # No LSD detection, but high risk
+            label = "No LSD detection\nHigh Risk"
+            text_color = (0, 0, 255)    # red
         else:
-            model_assessment = label_text.lower()
-    return annotated_img, model_assessment
+            label = "No LSD detection\nLow Risk"
+            text_color = (0, 255, 0)    # green
+        # Just draw text top-left
+        x_t, y_t = 20, 40
+        font_face = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 0.7
+        thickness = 2
+        for line in label.split("\n"):
+            cv2.putText(image_cv2, line, (x_t, y_t),
+                        font_face, font_scale, text_color,
+                        thickness, cv2.LINE_AA)
+            text_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
+            y_t += text_size[1] + 10
+
+        # We'll interpret model_assessment as well
+        if rf_pred == 1:
+            model_assessment = "no detection high"
+        else:
+            model_assessment = "no detection low"
+        return image_cv2, model_assessment
+
+    # If bounding boxes => handle each
+    model_assessment = None
+    for i, row in df.iterrows():
+        x_min = int(row['xmin'])
+        y_min = int(row['ymin'])
+        x_max = int(row['xmax'])
+        y_max = int(row['ymax'])
+        yolo_conf = row['confidence']
+        yolo_class = row['name']  # e.g. "infected", "healthy"
+
+        label = ""
+        color = (0, 255, 0)
+        # 6-case logic:
+        if yolo_class.lower() == "infected":
+            # Cases 1 or 2
+            color = (0, 0, 255)  # red
+            if rf_pred == 1:
+                # infected + high
+                label = f"Infected (High)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
+                model_assessment = "infected high"
+            else:
+                # infected + low
+                label = f"Infected (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
+                model_assessment = "infected low"
+        else:
+            # YOLO says "healthy" -> cases 5 or 6
+            if rf_pred == 1:
+                color = (255, 0, 255)  # purple
+                label = f"Suspected (High)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
+                model_assessment = "suspected high"
+            else:
+                color = (0, 255, 0)    # green
+                label = f"Healthy (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
+                model_assessment = "healthy low"
+
+        draw_custom_label(image_cv2, (x_min, y_min, x_max, y_max), label, color=color)
+
+    return image_cv2, model_assessment or "unknown"
 
 # 3. Helper Functions for External API Calls
+
 def get_coordinates(address: str):
     google_api_key = os.getenv("VITE_GOOGLE_MAPS_API_KEY")
     geocoding_url = f"https://maps.gomaps.pro/maps/api/geocode/json?address={address}&key={google_api_key}"
@@ -132,7 +178,6 @@ def get_coordinates(address: str):
         return location["lat"], location["lng"]
     else:
         raise HTTPException(status_code=400, detail="Failed to get coordinates")
-
 
 def get_weather(lat: float, lon: float):
     weather_api_key = os.getenv("VITE_WEATHER_API_KEY")
@@ -169,13 +214,13 @@ async def predict(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-    # Extract weather parameters
+    # Extract weather parameters in the same order: tmp, vap, pre, cld
     tmp = weather_info["temperature"]
+    vap = weather_info["vapor_pressure"]
     pre = weather_info["precipitation"]
     cld = weather_info["cloud_cover"]
-    vap = weather_info["vapor_pressure"]
 
-    # Run the inference combining image and weather data
+    # Run the six-case logic for LSD detection + weather risk
     annotated_img, model_assessment = run_inference(img_cv2, tmp, vap, pre, cld)
     
     # Convert the annotated image to a base64 string to send over HTTP

@@ -38,7 +38,7 @@ const Dashboard: React.FC = () => {
   const [lymphEnlargement, setLymphEnlargement] = useState('No');
   const [laziness, setLaziness] = useState('No');
 
-  // Assessment result state
+  // Assessment result state (this is the raw result string from the API)
   const [assessmentResult, setAssessmentResult] = useState<string | null>(null);
 
   // Helper function to get a local timestamp in "YYYY-MM-DD HH:mm:ss" format
@@ -234,6 +234,32 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // --- Assessment Result Logic ---
+  // Determine the background class and the message to show based on the assessment result string
+  let bgClass = "";
+  let resultText = "";
+  if (assessmentResult?.toLowerCase().includes("no detection")) {
+    if (assessmentResult.toLowerCase().includes("high")) {
+      bgClass = "bg-red-900/50 text-red-100";
+      resultText = "No visual detection was observed, but weather data indicates high risk.";
+    } else {
+      bgClass = "bg-green-900/50 text-green-100";
+      resultText = "No visual detection was observed, and weather data indicates low risk.";
+    }
+  } else if (assessmentResult?.toLowerCase().includes("healthy")) {
+    bgClass = "bg-green-900/50 text-green-100";
+    resultText = "The cattle appears to be healthy based on the image analysis and provided health information.";
+  } else if (assessmentResult?.toLowerCase().includes("suspected")) {
+    bgClass = "bg-yellow-900/50 text-yellow-100";
+    resultText = "LSD is suspected based on the image analysis and/or environmental risk factors. Consider further testing.";
+  } else if (assessmentResult?.toLowerCase().includes("infected")) {
+    bgClass = "bg-red-900/50 text-red-100";
+    resultText = "LSD has been detected with high confidence. Immediate veterinary attention is recommended.";
+  } else {
+    bgClass = "bg-gray-900 text-gray-100";
+    resultText = assessmentResult || "";
+  }
+
   // Animation variants
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
@@ -242,9 +268,9 @@ const Dashboard: React.FC = () => {
       y: 0,
       transition: {
         duration: 0.5,
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -252,8 +278,8 @@ const Dashboard: React.FC = () => {
     animate: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5 }
-    }
+      transition: { duration: 0.5 },
+    },
   };
 
   return (
@@ -264,10 +290,7 @@ const Dashboard: React.FC = () => {
       animate="animate"
     >
       <div className="max-w-4xl mx-auto">
-        <motion.h1
-          className="text-3xl font-bold text-white mb-8"
-          variants={itemVariants}
-        >
+        <motion.h1 className="text-3xl font-bold text-white mb-8" variants={itemVariants}>
           LSD Assessment Dashboard
         </motion.h1>
 
@@ -302,21 +325,12 @@ const Dashboard: React.FC = () => {
         </AnimatePresence>
 
         {/* 1. Image Upload */}
-        <AnimatedCard
-          className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden mb-6 border border-blue-900/20"
-          delay={0.1}
-        >
+        <AnimatedCard className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden mb-6 border border-blue-900/20" delay={0.1}>
           <div className="px-4 py-5 sm:px-6 flex items-center">
-            <motion.div
-              initial={{ rotate: 0 }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
+            <motion.div initial={{ rotate: 0 }} animate={{ rotate: 360 }} transition={{ duration: 1, delay: 0.5 }}>
               <Upload className="h-6 w-6 text-blue-500 mr-2" />
             </motion.div>
-            <h3 className="text-lg leading-6 font-medium text-white">
-              1. Upload Cattle Image
-            </h3>
+            <h3 className="text-lg leading-6 font-medium text-white">1. Upload Cattle Image</h3>
           </div>
           <div className="px-4 py-5 sm:p-6">
             <motion.div
@@ -324,13 +338,7 @@ const Dashboard: React.FC = () => {
               whileHover={{ scale: 1.02, borderColor: '#3b82f6' }}
               whileTap={{ scale: 0.98 }}
             >
-              <input
-                type="file"
-                id="image-upload"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
+              <input type="file" id="image-upload" accept="image/*" className="hidden" onChange={handleImageChange} />
               <label htmlFor="image-upload" className="cursor-pointer w-full text-center">
                 {imagePreview ? (
                   <motion.img
@@ -343,10 +351,7 @@ const Dashboard: React.FC = () => {
                   />
                 ) : (
                   <div className="text-gray-400 text-center">
-                    <motion.div
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
-                    >
+                    <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 2, repeatType: 'reverse' }}>
                       <Upload className="h-12 w-12 mx-auto mb-2" />
                     </motion.div>
                     <p>Click to upload an image of your cattle</p>
@@ -359,20 +364,12 @@ const Dashboard: React.FC = () => {
         </AnimatedCard>
 
         {/* 2. Location & Weather */}
-        <AnimatedCard
-          className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden mb-6 border border-blue-900/20"
-          delay={0.2}
-        >
+        <AnimatedCard className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden mb-6 border border-blue-900/20" delay={0.2}>
           <div className="px-4 py-5 sm:px-6 flex items-center">
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
-            >
+            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2, repeatType: 'reverse' }}>
               <MapPin className="h-6 w-6 text-blue-500 mr-2" />
             </motion.div>
-            <h3 className="text-lg leading-6 font-medium text-white">
-              2. Get Location & Weather Data
-            </h3>
+            <h3 className="text-lg leading-6 font-medium text-white">2. Get Location & Weather Data</h3>
           </div>
           <div className="px-4 py-5 sm:p-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -392,7 +389,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center">
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"
                     />
                     <span>Fetching...</span>
@@ -412,44 +409,20 @@ const Dashboard: React.FC = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <motion.div
-                    className="bg-[#1e293b] p-4 rounded-lg"
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                  >
+                  <motion.div className="bg-[#1e293b] p-4 rounded-lg" initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
                     <h4 className="text-white font-medium mb-2">Location</h4>
                     <p className="text-gray-300">Area: {weatherData.area}</p>
                     <p className="text-gray-300">Country: {weatherData.country}</p>
-                    <p className="text-gray-300">
-                      Latitude: {weatherData.latitude.toFixed(4)}
-                    </p>
-                    <p className="text-gray-300">
-                      Longitude: {weatherData.longitude.toFixed(4)}
-                    </p>
+                    <p className="text-gray-300">Latitude: {weatherData.latitude.toFixed(4)}</p>
+                    <p className="text-gray-300">Longitude: {weatherData.longitude.toFixed(4)}</p>
                   </motion.div>
-                  <motion.div
-                    className="bg-[#1e293b] p-4 rounded-lg"
-                    initial={{ x: 20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
+                  <motion.div className="bg-[#1e293b] p-4 rounded-lg" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
                     <h4 className="text-white font-medium mb-2">Weather</h4>
-                    <p className="text-gray-300">
-                      Temperature: {weatherData.temperature.toFixed(1)}°C
-                    </p>
-                    <p className="text-gray-300">
-                      Humidity: {weatherData.humidity.toFixed(1)}%
-                    </p>
-                    <p className="text-gray-300">
-                      Precipitation: {weatherData.precipitation.toFixed(2)} mm
-                    </p>
-                    <p className="text-gray-300">
-                      Cloud Cover: {weatherData.cloud_cover.toFixed(1)}%
-                    </p>
-                    <p className="text-gray-300">
-                      Vapor Pressure: {weatherData.vapor_pressure.toFixed(1)} hPa
-                    </p>
+                    <p className="text-gray-300">Temperature: {weatherData.temperature.toFixed(1)}°C</p>
+                    <p className="text-gray-300">Humidity: {weatherData.humidity.toFixed(1)}%</p>
+                    <p className="text-gray-300">Precipitation: {weatherData.precipitation.toFixed(2)} mm</p>
+                    <p className="text-gray-300">Cloud Cover: {weatherData.cloud_cover.toFixed(1)}%</p>
+                    <p className="text-gray-300">Vapor Pressure: {weatherData.vapor_pressure.toFixed(1)} hPa</p>
                   </motion.div>
                 </motion.div>
               )}
@@ -458,32 +431,18 @@ const Dashboard: React.FC = () => {
         </AnimatedCard>
 
         {/* 3. Cattle Health Info */}
-        <AnimatedCard
-          className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden mb-6 border border-blue-900/20"
-          delay={0.3}
-        >
+        <AnimatedCard className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden mb-6 border border-blue-900/20" delay={0.3}>
           <div className="px-4 py-5 sm:px-6 flex items-center">
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 3, repeatType: "reverse" }}
-            >
+            <motion.div animate={{ rotate: [0, 10, -10, 10, 0] }} transition={{ repeat: Infinity, duration: 3, repeatType: 'reverse' }}>
               <ThermometerSun className="h-6 w-6 text-blue-500 mr-2" />
             </motion.div>
-            <h3 className="text-lg leading-6 font-medium text-white">
-              3. Enter Cattle Health Information
-            </h3>
+            <h3 className="text-lg leading-6 font-medium text-white">3. Enter Cattle Health Information</h3>
           </div>
           <div className="px-4 py-5 sm:p-6">
             <form onSubmit={handleSubmitAssessment}>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <label htmlFor="cattle-id" className="block text-sm font-medium text-gray-400">
-                    Cattle UID
-                  </label>
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+                  <label htmlFor="cattle-id" className="block text-sm font-medium text-gray-400">Cattle UID</label>
                   <input
                     type="text"
                     id="cattle-id"
@@ -494,14 +453,8 @@ const Dashboard: React.FC = () => {
                   />
                 </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <label htmlFor="body-temp" className="block text-sm font-medium text-gray-400">
-                    Body Temperature (°C)
-                  </label>
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+                  <label htmlFor="body-temp" className="block text-sm font-medium text-gray-400">Body Temperature (°C)</label>
                   <input
                     type="number"
                     id="body-temp"
@@ -625,7 +578,7 @@ const Dashboard: React.FC = () => {
                     <div className="flex items-center justify-center">
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                         className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"
                       />
                       <span>Processing...</span>
@@ -643,25 +596,18 @@ const Dashboard: React.FC = () => {
         <AnimatePresence>
           {assessmentResult && (
             <motion.div
-              className="bg-[#0f172a] shadow-lg rounded-lg overflow-hidden border border-blue-900/20"
+              className={`bg-[#0f172a] shadow-lg rounded-lg overflow-hidden border border-blue-900/20`}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
               <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-white">
-                  Assessment Result
-                </h3>
+                <h3 className="text-lg leading-6 font-medium text-white">Assessment Result</h3>
               </div>
               <div className="px-4 py-5 sm:p-6">
                 <motion.div
-                  className={`p-4 rounded-lg ${assessmentResult === 'healthy'
-                      ? 'bg-green-900/50 text-green-100'
-                      : assessmentResult === 'lsd suspected'
-                        ? 'bg-yellow-900/50 text-yellow-100'
-                        : 'bg-red-900/50 text-red-100'
-                    }`}
+                  className={`p-4 rounded-lg ${bgClass}`}
                   initial={{ scale: 0.9 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.3 }}
@@ -674,16 +620,8 @@ const Dashboard: React.FC = () => {
                   >
                     {assessmentResult}
                   </motion.h4>
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    {assessmentResult === 'healthy'
-                      ? 'The cattle appears to be healthy based on the image analysis and provided health information.'
-                      : assessmentResult === 'lsd suspected'
-                        ? 'LSD is suspected based on the image analysis and/or environmental risk factors. Consider further testing.'
-                        : 'LSD has been detected with high confidence. Immediate veterinary attention is recommended.'}
+                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+                    {resultText}
                   </motion.p>
                 </motion.div>
 

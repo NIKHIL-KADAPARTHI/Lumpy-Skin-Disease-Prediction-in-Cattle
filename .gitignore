@@ -160,3 +160,4 @@ public/
 
 # Serverless directories
 .serverless/
+.vercel
