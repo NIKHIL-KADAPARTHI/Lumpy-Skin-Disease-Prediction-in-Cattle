@@ -123,21 +123,9 @@ def run_inference(image_cv2, tmp, vap, pre, cld):
 
         # We'll interpret model_assessment as well
         if rf_pred == 1:
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-            model_assessment = "no detection high"
-        else:
-            model_assessment = "no detection low"
-=======
             model_assessment = "no detection | high"
         else:
             model_assessment = "no detection | low"
->>>>>>> 05fdbf0972b1509a972846cf41b7e397bf7b9a17
-=======
-            model_assessment = "no detection | high"
-        else:
-            model_assessment = "no detection | low"
->>>>>>> Stashed changes
         return image_cv2, model_assessment
 
     # If bounding boxes => handle each
@@ -159,53 +147,21 @@ def run_inference(image_cv2, tmp, vap, pre, cld):
             if rf_pred == 1:
                 # infected + high
                 label = f"Infected (High)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-                model_assessment = "infected high"
-            else:
-                # infected + low
-                label = f"Infected (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
-                model_assessment = "infected low"
-=======
                 model_assessment = "infected | high"
             else:
                 # infected + low
                 label = f"Infected (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
                 model_assessment = "infected | low"
->>>>>>> 05fdbf0972b1509a972846cf41b7e397bf7b9a17
-=======
-                model_assessment = "infected | high"
-            else:
-                # infected + low
-                label = f"Infected (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
-                model_assessment = "infected | low"
->>>>>>> Stashed changes
         else:
             # YOLO says "healthy" -> cases 5 or 6
             if rf_pred == 1:
                 color = (255, 0, 255)  # purple
                 label = f"Suspected (High)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-                model_assessment = "suspected high"
-            else:
-                color = (0, 255, 0)    # green
-                label = f"Healthy (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
-                model_assessment = "healthy low"
-=======
                 model_assessment = "suspected | high"
             else:
                 color = (0, 255, 0)    # green
                 label = f"Healthy (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
                 model_assessment = "healthy | low"
->>>>>>> 05fdbf0972b1509a972846cf41b7e397bf7b9a17
-=======
-                model_assessment = "suspected | high"
-            else:
-                color = (0, 255, 0)    # green
-                label = f"Healthy (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
-                model_assessment = "healthy | low"
->>>>>>> Stashed changes
 
         draw_custom_label(image_cv2, (x_min, y_min, x_max, y_max), label, color=color)
 

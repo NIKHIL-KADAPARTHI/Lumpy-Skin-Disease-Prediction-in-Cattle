@@ -11,9 +11,5 @@ pyrebase4
 pycryptodome
 uvicorn
 fastapi
-<<<<<<< HEAD
-python-dotenv
-=======
 python-dotenv
 python-multipart
->>>>>>> 05fdbf0972b1509a972846cf41b7e397bf7b9a17
