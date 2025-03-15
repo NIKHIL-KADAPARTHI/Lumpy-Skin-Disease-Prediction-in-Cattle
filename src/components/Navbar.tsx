@@ -148,7 +148,7 @@ const Navbar: React.FC = () => {
                 </motion.div>
 
                 <motion.a
-                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
+                  href="https://github.com/NIKHIL-KADAPARTHI/Lumpy-Skin-Disease-Prediction-in-Cattle"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center px-3 py-2 rounded hover:bg-blue-900/30"
@@ -173,7 +173,7 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <motion.a
-                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
+                  href="https://github.com/NIKHIL-KADAPARTHI/Lumpy-Skin-Disease-Prediction-in-Cattle"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center px-3 py-2 rounded hover:bg-blue-900/30"
@@ -275,7 +275,7 @@ const Navbar: React.FC = () => {
                 </Link>
 
                 <a
-                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
+                  href="https://github.com/NIKHIL-KADAPARTHI/Lumpy-Skin-Disease-Prediction-in-Cattle"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-3 py-2 rounded text-gray-300 hover:bg-blue-900/30"
@@ -303,7 +303,7 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <a
-                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
+                  href="https://github.com/NIKHIL-KADAPARTHI/Lumpy-Skin-Disease-Prediction-in-Cattle"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-3 py-2 rounded text-gray-300 hover:bg-blue-900/30"

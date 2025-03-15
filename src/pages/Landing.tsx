@@ -129,7 +129,7 @@ const Landing: React.FC = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     <a
-                      href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
+                      href="https://github.com/NIKHIL-KADAPARTHI/Lumpy-Skin-Disease-Prediction-in-Cattle"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center px-4 py-3 border border-blue-500 text-base font-medium rounded-md shadow-sm text-blue-500 hover:bg-blue-900/20 sm:px-8"
@@ -345,7 +345,7 @@ const Landing: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <motion.a
-              href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
+              href="https://github.com/NIKHIL-KADAPARTHI/Lumpy-Skin-Disease-Prediction-in-Cattle"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-6 py-4 border border-blue-500 text-base font-medium rounded-md shadow-md text-blue-500 bg-transparent hover:bg-blue-900/20 transition-colors"
