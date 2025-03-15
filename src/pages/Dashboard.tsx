@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
   const getCoordinates = async (address: string) => {
     try {
       const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-      console.log("Google API Key:", googleApiKey);
+      // console.log("Google API Key:", googleApiKey);
       const geocodingUrl = `https://maps.gomaps.pro/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${googleApiKey}`;
       const response = await fetch(geocodingUrl);
       const data = await response.json();

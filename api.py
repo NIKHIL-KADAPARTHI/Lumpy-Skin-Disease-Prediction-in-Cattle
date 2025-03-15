@@ -10,6 +10,8 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
+import pandas as pd
+from ultralytics import YOLO
 
 # Load environment variables from .env file
 load_dotenv()
@@ -37,12 +39,8 @@ weather_model = None
 def load_yolo_model():
     global yolo_model
     if yolo_model is None:
-        yolo_model = torch.hub.load(
-            './yolov5', 'custom',
-            path='best.pt',
-            source='local',
-            force_reload=True
-        )
+        # Load the YOLOv8 model from best.pt using ultralytics YOLO API
+        yolo_model = YOLO("best.pt")
     return yolo_model
 
 def load_weather_model():
@@ -51,7 +49,7 @@ def load_weather_model():
         weather_model = joblib.load("random_forest_model_weather_data.pkl")
     return weather_model
 
-# 2. LSD Inference Functions
+# 2. Weather Prediction and Label Drawing Functions
 
 def get_weather_prediction(tmp: float, vap: float, pre: float, cld: float):
     """
@@ -60,10 +58,9 @@ def get_weather_prediction(tmp: float, vap: float, pre: float, cld: float):
     rf_proba is the model's probability of LSD risk (class=1).
     """
     model = load_weather_model()
-    X = np.array([[tmp, vap, pre, cld]], dtype=float)
-    # Prediction (0 or 1)
+    # Convert to DataFrame with feature names matching the training data
+    X = pd.DataFrame([[tmp, vap, pre, cld]], columns=["tmp", "vap", "pre", "cld"])
     rf_pred = model.predict(X)[0]
-    # Probability that LSD risk = 1
     rf_proba = model.predict_proba(X)[0][1]
     return rf_pred, rf_proba
 
@@ -76,7 +73,6 @@ def draw_custom_label(image, box, label_text, color=(0, 255, 0)):
 
     box_w = x_max - x_min
     box_h = y_max - y_min
-    # dynamic but smaller scaling => /300
     font_scale = max(0.3, min(0.8, (min(box_w, box_h) / 300.0)))
     font_face = cv2.FONT_HERSHEY_SIMPLEX
     thickness = 1
@@ -95,21 +91,27 @@ def run_inference(image_cv2, tmp, vap, pre, cld):
     # 1. Get random forest results (rf_pred, rf_proba)
     rf_pred, rf_proba = get_weather_prediction(tmp, vap, pre, cld)
 
-    # 2. YOLO inference
+    # 2. YOLO inference using YOLOv8 API
     model = load_yolo_model()
     results = model(image_cv2)
-    df = results.pandas().xyxy[0]
+    
+    # Extract bounding box data from YOLOv8 results.
+    boxes_tensor = results[0].boxes.data
+    if boxes_tensor is None or boxes_tensor.shape[0] == 0:
+        df = pd.DataFrame()  # No detections
+    else:
+        # The tensor columns: [xmin, ymin, xmax, ymax, confidence, class_id]
+        df = pd.DataFrame(boxes_tensor.cpu().numpy(), 
+                          columns=["xmin", "ymin", "xmax", "ymax", "confidence", "class_id"])
 
-    # If no bounding boxes => case 3 or 4
-    if len(df) == 0:
+    # If no bounding boxes => handle "no detection" case.
+    if df.empty:
         if rf_pred == 1:
-            # No LSD detection, but high risk
             label = "No LSD detection\nHigh Risk"
             text_color = (0, 0, 255)    # red
         else:
             label = "No LSD detection\nLow Risk"
             text_color = (0, 255, 0)    # green
-        # Just draw text top-left
         x_t, y_t = 20, 40
         font_face = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = 0.7
@@ -121,14 +123,10 @@ def run_inference(image_cv2, tmp, vap, pre, cld):
             text_size, _ = cv2.getTextSize(line, font_face, font_scale, thickness)
             y_t += text_size[1] + 10
 
-        # We'll interpret model_assessment as well
-        if rf_pred == 1:
-            model_assessment = "no detection | high"
-        else:
-            model_assessment = "no detection | low"
+        model_assessment = "no detection | high" if rf_pred == 1 else "no detection | low"
         return image_cv2, model_assessment
 
-    # If bounding boxes => handle each
+    # Process each detected bounding box.
     model_assessment = None
     for i, row in df.iterrows():
         x_min = int(row['xmin'])
@@ -136,24 +134,22 @@ def run_inference(image_cv2, tmp, vap, pre, cld):
         x_max = int(row['xmax'])
         y_max = int(row['ymax'])
         yolo_conf = row['confidence']
-        yolo_class = row['name']  # e.g. "infected", "healthy"
+        class_id = int(row['class_id'])
+        # Get the class name using YOLOv8's names mapping.
+        yolo_class = results[0].names[class_id]
 
         label = ""
         color = (0, 255, 0)
-        # 6-case logic:
+        # Six-case logic:
         if yolo_class.lower() == "infected":
-            # Cases 1 or 2
             color = (0, 0, 255)  # red
             if rf_pred == 1:
-                # infected + high
                 label = f"Infected (High)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
                 model_assessment = "infected | high"
             else:
-                # infected + low
                 label = f"Infected (Low)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
                 model_assessment = "infected | low"
         else:
-            # YOLO says "healthy" -> cases 5 or 6
             if rf_pred == 1:
                 color = (255, 0, 255)  # purple
                 label = f"Suspected (High)\nY={yolo_conf:.2f} R={rf_proba:.2f}"
@@ -214,13 +210,13 @@ async def predict(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-    # Extract weather parameters in the same order: tmp, vap, pre, cld
+    # Extract weather parameters in the order: tmp, vap, pre, cld
     tmp = weather_info["temperature"]
     vap = weather_info["vapor_pressure"]
     pre = weather_info["precipitation"]
     cld = weather_info["cloud_cover"]
 
-    # Run the six-case logic for LSD detection + weather risk
+    # Run the combined inference logic
     annotated_img, model_assessment = run_inference(img_cv2, tmp, vap, pre, cld)
     
     # Convert the annotated image to a base64 string to send over HTTP

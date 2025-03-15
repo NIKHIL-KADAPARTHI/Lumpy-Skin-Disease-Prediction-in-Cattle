@@ -7,8 +7,8 @@ import AnimatedText from '../components/AnimatedText';
 const Landing: React.FC = () => {
   const fadeInUp = {
     hidden: { opacity: 0, y: 60 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.6, ease: "easeOut" }
     }
@@ -26,8 +26,8 @@ const Landing: React.FC = () => {
 
   const featureVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.5 }
     }
@@ -35,17 +35,17 @@ const Landing: React.FC = () => {
 
   const iconAnimation = {
     hidden: { scale: 0, rotate: -180 },
-    visible: { 
-      scale: 1, 
+    visible: {
+      scale: 1,
       rotate: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 260, 
+      transition: {
+        type: "spring",
+        stiffness: 260,
         damping: 20,
         delay: 0.1
       }
     },
-    hover: { 
+    hover: {
       scale: 1.2,
       rotate: 15,
       transition: { duration: 0.3 }
@@ -53,7 +53,7 @@ const Landing: React.FC = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="min-h-screen bg-[#020617] text-white pt-16"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -81,8 +81,8 @@ const Landing: React.FC = () => {
                   delay={0.3}
                 />
               </motion.div>
-              
-              <motion.p 
+
+              <motion.p
                 className="mt-6 max-w-lg mx-auto text-xl text-gray-300 sm:max-w-3xl"
                 variants={fadeInUp}
                 initial="hidden"
@@ -91,8 +91,8 @@ const Landing: React.FC = () => {
               >
                 Advanced monitoring and early detection of Lumpy Skin Disease (LSD) in cattle using AI-powered image analysis and weather data.
               </motion.p>
-              
-              <motion.div 
+
+              <motion.div
                 className="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center"
                 variants={fadeInUp}
                 initial="hidden"
@@ -111,7 +111,7 @@ const Landing: React.FC = () => {
                       Get Started
                     </Link>
                   </motion.div>
-                  
+
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -123,13 +123,13 @@ const Landing: React.FC = () => {
                       Sign Up
                     </Link>
                   </motion.div>
-                  
+
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <a
-                      href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+                      href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center px-4 py-3 border border-blue-500 text-base font-medium rounded-md shadow-sm text-blue-500 hover:bg-blue-900/20 sm:px-8"
@@ -143,41 +143,41 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Animated background elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-30 pointer-events-none">
-          <motion.div 
+          <motion.div
             className="absolute top-[10%] left-[5%] w-64 h-64 rounded-full bg-blue-500/10"
-            animate={{ 
+            animate={{
               x: [0, 50, 0],
               y: [0, 30, 0],
             }}
-            transition={{ 
-              repeat: Infinity, 
+            transition={{
+              repeat: Infinity,
               duration: 15,
               ease: "easeInOut"
             }}
           />
-          <motion.div 
+          <motion.div
             className="absolute top-[40%] right-[10%] w-96 h-96 rounded-full bg-blue-700/10"
-            animate={{ 
+            animate={{
               x: [0, -70, 0],
               y: [0, 50, 0],
             }}
-            transition={{ 
-              repeat: Infinity, 
+            transition={{
+              repeat: Infinity,
               duration: 20,
               ease: "easeInOut"
             }}
           />
-          <motion.div 
+          <motion.div
             className="absolute bottom-[20%] left-[20%] w-80 h-80 rounded-full bg-indigo-600/10"
-            animate={{ 
+            animate={{
               x: [0, 60, 0],
               y: [0, -40, 0],
             }}
-            transition={{ 
-              repeat: Infinity, 
+            transition={{
+              repeat: Infinity,
               duration: 18,
               ease: "easeInOut"
             }}
@@ -189,7 +189,7 @@ const Landing: React.FC = () => {
       <div className="py-12 bg-[#0f172a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <motion.h2 
+            <motion.h2
               className="text-base text-blue-500 font-semibold tracking-wide uppercase"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -198,8 +198,8 @@ const Landing: React.FC = () => {
             >
               Features
             </motion.h2>
-            
-            <motion.p 
+
+            <motion.p
               className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-white sm:text-4xl"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -208,8 +208,8 @@ const Landing: React.FC = () => {
             >
               Comprehensive Cattle Health Monitoring
             </motion.p>
-            
-            <motion.p 
+
+            <motion.p
               className="mt-4 max-w-2xl text-xl text-gray-300 lg:mx-auto"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -220,7 +220,7 @@ const Landing: React.FC = () => {
             </motion.p>
           </div>
 
-          <motion.div 
+          <motion.div
             className="mt-10"
             variants={staggerContainer}
             initial="hidden"
@@ -228,12 +228,12 @@ const Landing: React.FC = () => {
             viewport={{ once: true }}
           >
             <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-              <motion.div 
+              <motion.div
                 className="flex"
                 variants={featureVariants}
               >
                 <div className="flex-shrink-0">
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white shimmer"
                     variants={iconAnimation}
                     whileHover="hover"
@@ -249,12 +249,12 @@ const Landing: React.FC = () => {
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="flex"
                 variants={featureVariants}
               >
                 <div className="flex-shrink-0">
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white shimmer"
                     variants={iconAnimation}
                     whileHover="hover"
@@ -270,12 +270,12 @@ const Landing: React.FC = () => {
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="flex"
                 variants={featureVariants}
               >
                 <div className="flex-shrink-0">
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white shimmer"
                     variants={iconAnimation}
                     whileHover="hover"
@@ -291,12 +291,12 @@ const Landing: React.FC = () => {
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="flex"
                 variants={featureVariants}
               >
                 <div className="flex-shrink-0">
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white shimmer"
                     variants={iconAnimation}
                     whileHover="hover"
@@ -315,11 +315,11 @@ const Landing: React.FC = () => {
           </motion.div>
         </div>
       </div>
-      
+
       {/* Documentation Section */}
       <div className="py-16 bg-[#020617]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="lg:text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -336,8 +336,8 @@ const Landing: React.FC = () => {
               Explore our comprehensive documentation to understand how our AI-powered system works to detect and prevent Lumpy Skin Disease.
             </p>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="mt-10 flex justify-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -345,7 +345,7 @@ const Landing: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <motion.a
-              href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+              href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-6 py-4 border border-blue-500 text-base font-medium rounded-md shadow-md text-blue-500 bg-transparent hover:bg-blue-900/20 transition-colors"

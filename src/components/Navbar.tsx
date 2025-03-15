@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
   };
 
   const navLinkVariants = {
-    hover: { 
+    hover: {
       scale: 1.05,
       backgroundColor: "rgba(15, 23, 42, 0.8)",
       transition: { duration: 0.2 }
@@ -44,8 +44,8 @@ const Navbar: React.FC = () => {
 
   const logoVariants = {
     initial: { opacity: 0, x: -20 },
-    animate: { 
-      opacity: 1, 
+    animate: {
+      opacity: 1,
       x: 0,
       transition: { duration: 0.5, ease: "easeOut" }
     }
@@ -56,17 +56,16 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <motion.nav 
-      className={`fixed top-0 left-0 right-0 z-50 text-white transition-all duration-300 ${
-        isScrolled ? 'bg-[#0f172a]/95 backdrop-blur-sm shadow-lg' : 'bg-[#0f172a]'
-      }`}
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 text-white transition-all duration-300 ${isScrolled ? 'bg-[#0f172a]/95 backdrop-blur-sm shadow-lg' : 'bg-[#0f172a]'
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
-          <motion.div 
+          <motion.div
             className="flex items-center"
             variants={logoVariants}
             initial="initial"
@@ -83,7 +82,7 @@ const Navbar: React.FC = () => {
               <span className="text-xl font-bold">FarmFriend</span>
             </Link>
           </motion.div>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             {currentUser ? (
@@ -93,67 +92,63 @@ const Navbar: React.FC = () => {
                   whileHover="hover"
                   whileTap="tap"
                 >
-                  <Link 
-                    to="/dashboard" 
-                    className={`flex items-center px-3 py-2 rounded ${
-                      isActive('/dashboard') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
-                    }`}
+                  <Link
+                    to="/dashboard"
+                    className={`flex items-center px-3 py-2 rounded ${isActive('/dashboard') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
+                      }`}
                   >
                     <Home className="h-5 w-5 mr-1" />
                     <span>Dashboard</span>
                   </Link>
                 </motion.div>
-                
+
                 <motion.div
                   variants={navLinkVariants}
                   whileHover="hover"
                   whileTap="tap"
                 >
-                  <Link 
-                    to="/cattle-info" 
-                    className={`flex items-center px-3 py-2 rounded ${
-                      isActive('/cattle-info') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
-                    }`}
+                  <Link
+                    to="/cattle-info"
+                    className={`flex items-center px-3 py-2 rounded ${isActive('/cattle-info') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
+                      }`}
                   >
                     <Database className="h-5 w-5 mr-1" />
                     <span>Cattle Info</span>
                   </Link>
                 </motion.div>
-                
+
                 <motion.div
                   variants={navLinkVariants}
                   whileHover="hover"
                   whileTap="tap"
                 >
-                  <Link 
-                    to="/rt-pcr" 
-                    className={`flex items-center px-3 py-2 rounded ${
-                      isActive('/rt-pcr') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
-                    }`}
+                  <Link
+                    to="/rt-pcr"
+                    className={`flex items-center px-3 py-2 rounded ${isActive('/rt-pcr') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
+                      }`}
                   >
                     <Activity className="h-5 w-5 mr-1" />
                     <span>RT-PCR</span>
                   </Link>
                 </motion.div>
-                
+
                 <motion.div
                   variants={navLinkVariants}
                   whileHover="hover"
                   whileTap="tap"
                 >
-                  <Link 
-                    to="/profile" 
-                    className={`flex items-center px-3 py-2 rounded ${
-                      isActive('/profile') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
-                    }`}
+                  <Link
+                    to="/profile"
+                    className={`flex items-center px-3 py-2 rounded ${isActive('/profile') ? 'bg-blue-900/50 text-blue-400' : 'hover:bg-blue-900/30'
+                      }`}
                   >
                     <User className="h-5 w-5 mr-1" />
                     <span>Profile</span>
                   </Link>
                 </motion.div>
-                
+
                 <motion.a
-                  href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center px-3 py-2 rounded hover:bg-blue-900/30"
@@ -164,8 +159,8 @@ const Navbar: React.FC = () => {
                   <Github className="h-5 w-5 mr-1" />
                   <span>Docs</span>
                 </motion.a>
-                
-                <motion.button 
+
+                <motion.button
                   onClick={handleLogout}
                   className="flex items-center px-3 py-2 rounded bg-red-600 hover:bg-red-700"
                   whileHover={{ scale: 1.05 }}
@@ -178,7 +173,7 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <motion.a
-                  href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center px-3 py-2 rounded hover:bg-blue-900/30"
@@ -189,7 +184,7 @@ const Navbar: React.FC = () => {
                   <Github className="h-5 w-5 mr-1" />
                   <span>Documentation</span>
                 </motion.a>
-                
+
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -201,7 +196,7 @@ const Navbar: React.FC = () => {
               </>
             )}
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <motion.button
@@ -218,10 +213,10 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <motion.div 
+        <motion.div
           className="md:hidden bg-[#0f172a] border-t border-blue-900/30"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -231,11 +226,10 @@ const Navbar: React.FC = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {currentUser ? (
               <>
-                <Link 
-                  to="/dashboard" 
-                  className={`block px-3 py-2 rounded ${
-                    isActive('/dashboard') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
-                  }`}
+                <Link
+                  to="/dashboard"
+                  className={`block px-3 py-2 rounded ${isActive('/dashboard') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
+                    }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <div className="flex items-center">
@@ -243,12 +237,11 @@ const Navbar: React.FC = () => {
                     <span>Dashboard</span>
                   </div>
                 </Link>
-                
-                <Link 
-                  to="/cattle-info" 
-                  className={`block px-3 py-2 rounded ${
-                    isActive('/cattle-info') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
-                  }`}
+
+                <Link
+                  to="/cattle-info"
+                  className={`block px-3 py-2 rounded ${isActive('/cattle-info') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
+                    }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <div className="flex items-center">
@@ -256,12 +249,11 @@ const Navbar: React.FC = () => {
                     <span>Cattle Info</span>
                   </div>
                 </Link>
-                
-                <Link 
-                  to="/rt-pcr" 
-                  className={`block px-3 py-2 rounded ${
-                    isActive('/rt-pcr') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
-                  }`}
+
+                <Link
+                  to="/rt-pcr"
+                  className={`block px-3 py-2 rounded ${isActive('/rt-pcr') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
+                    }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <div className="flex items-center">
@@ -269,12 +261,11 @@ const Navbar: React.FC = () => {
                     <span>RT-PCR</span>
                   </div>
                 </Link>
-                
-                <Link 
-                  to="/profile" 
-                  className={`block px-3 py-2 rounded ${
-                    isActive('/profile') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
-                  }`}
+
+                <Link
+                  to="/profile"
+                  className={`block px-3 py-2 rounded ${isActive('/profile') ? 'bg-blue-900/50 text-blue-400' : 'text-gray-300 hover:bg-blue-900/30'
+                    }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <div className="flex items-center">
@@ -282,9 +273,9 @@ const Navbar: React.FC = () => {
                     <span>Profile</span>
                   </div>
                 </Link>
-                
+
                 <a
-                  href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-3 py-2 rounded text-gray-300 hover:bg-blue-900/30"
@@ -295,8 +286,8 @@ const Navbar: React.FC = () => {
                     <span>Documentation</span>
                   </div>
                 </a>
-                
-                <button 
+
+                <button
                   onClick={() => {
                     handleLogout();
                     setMobileMenuOpen(false);
@@ -312,7 +303,7 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <a
-                  href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+                  href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block px-3 py-2 rounded text-gray-300 hover:bg-blue-900/30"
@@ -323,9 +314,9 @@ const Navbar: React.FC = () => {
                     <span>Documentation</span>
                   </div>
                 </a>
-                
-                <Link 
-                  to="/login" 
+
+                <Link
+                  to="/login"
                   className="block px-3 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={() => setMobileMenuOpen(false)}
                 >

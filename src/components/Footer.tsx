@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
 
           {/* Documentation Section */}
           <motion.a
-            href="https://github.com/NIKHIL-KADAPARTHI/LSD_Detection"
+            href="https://github.com/NIKHIL-KADAPARTHI/lsd-bolt"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center text-gray-300 hover:text-blue-400 transition-colors"
