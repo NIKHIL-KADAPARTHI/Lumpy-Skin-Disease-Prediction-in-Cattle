@@ -33,7 +33,7 @@ FarmFriend is a comprehensive web application designed for cattle health monitor
   - Python for model integration and API development
 
 - **Machine Learning:**  
-  - YOLOv5 (PyTorch) for image-based cattle health assessment  
+  - YOLOv8 (PyTorch) for image-based cattle health assessment  
   - RandomForestClassifier (scikit-learn) for weather-based risk analysis  
   - Models are stored in `best.pt` and `random_forest_model_weather_data.pkl`
 
@@ -98,7 +98,7 @@ FarmFriend is a comprehensive web application designed for cattle health monitor
 - Contributions are welcome! Please fork the repository, make changes, and open a pull request. Make sure to follow any coding guidelines provided.
 
 ## Acknowledgments
-- Ultralytics YOLOv5
+- Ultralytics YOLOv8
 -  Firebase
 - OpenWeatherMap
 - Vite
